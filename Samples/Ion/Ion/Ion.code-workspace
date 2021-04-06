@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"editor.suggest.showWords": false,
+		"files.exclude": {
+			"bin": true,
+			"obj": true
+		},
+		"search.exclude": {
+			"intermediate.ion": true
+		}
+	}
+}

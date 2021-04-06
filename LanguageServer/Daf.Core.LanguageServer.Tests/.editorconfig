@@ -1,0 +1,11 @@
+[*.cs]
+
+#### Code analysis ####
+
+# CA2007:Consider calling ConfigureAwait on the awaited task
+# ConfigureAwait(false) should be used in libraries, the language server is an application (see https://devblogs.microsoft.com/dotnet/configureawait-faq/)"
+dotnet_diagnostic.CA2007.severity = none
+
+#CA1707:Identifiers should not contain underscores
+#Conflicts with unit testing naming standard
+dotnet_diagnostic.CA1707.severity = none

@@ -1,0 +1,4 @@
+SsisProjects: 
+	SsisProject: Name="SsisProject"
+		Packages: 
+			Package: Name="Package1"
