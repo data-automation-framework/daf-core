@@ -1,0 +1,75 @@
+name: Build
+
+on:
+  pull_request:
+    branches:
+      - master
+      - develop
+      - 'release/*'
+
+jobs:
+  build:
+    name: Build
+    runs-on: windows-latest # xcopy commands in visual studio post-build won't run on Linux.
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Avoid shallow clone so nbgv can do its work.
+      - name: Validate branch name
+        uses: deepakputhraya/action-branch-name@v1.0.0
+        with:
+          regex: '([a-z])+\/([a-z])+'
+          allowed_prefixes: 'feature,fix,revert,dependabot'
+          ignore: master,develop
+          min_length: 3 # Min length of the branch name
+      - name: Setup Nerdbank.GitVersioning
+        id: nbgv
+        uses: dotnet/nbgv@v0.4.0
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x # SDK Version to use.
+          source-url: https://nuget.pkg.github.com/data-automation-framework/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB }}
+      - name: Build Daf Core
+        run: dotnet build --configuration Release
+      - name: Run dotnet unit tests
+        run: dotnet test --configuration Release --nologo
+      - name: Install NPM packages
+        working-directory: ./Daf.Core.VSCode
+        run: npm install
+      - name: Install VSCE
+        working-directory: ./Daf.Core.VSCode
+        run: npm i -g vsce
+      - name: Copy readme and license to VSCode directory
+        run: cp README.md Daf.Core.VSCode/README.md;cp LICENSE Daf.Core.VSCode/LICENSE
+        shell: bash
+      - name: Build VsCode Extension
+        working-directory: ./Daf.Core.VSCode
+        run: vsce package -o daf-core.vsix
+      - uses: papeloto/action-zip@v1
+        with:
+          files: Daf.Core.VSCode/Daf.Core
+          recursive: true
+          dest: daf-core-buildsystem.zip
+      - uses: actions/upload-artifact@v2
+        with:
+          name: daf-core-buildsystem
+          path: Daf.Core.VSCode/Daf.Core
+      - uses: actions/upload-artifact@v2
+        with:
+          name: daf-core
+          path: Daf.Core.VSCode/daf-core.vsix
+      # - name: Setup MSBuild
+      #   uses: microsoft/setup-msbuild@v1
+      # - name: Build installer
+      #   working-directory: ./Installer/Installer
+      #   run: msbuild /property:Configuration=Release
+      # - uses: actions/upload-artifact@v2
+      #   with:
+      #     name: daf-core-installer
+      #     path: Installer/Installer/bin/Release/Installer.msi

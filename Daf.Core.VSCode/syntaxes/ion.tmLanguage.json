@@ -1,0 +1,208 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Ion",
+	"fileTypes": [
+		"ion",
+		"daf"
+	],
+	"patterns": [
+		{
+			"include": "#strings"
+		},
+		{
+			"include": "#flow-scalar-plain-in"
+		},
+		{
+			"include": "#element"
+		},
+		{
+			"include": "#attribute"
+		},
+		{
+			"include": "#ion"
+		},
+		{
+			"include": "#ioncomment"
+		},
+		{
+			"include": "#t4directive"
+		},
+		{
+			"include": "#t4block"
+		},
+		{
+			"include": "#literalblock"
+		}
+	],
+	"repository": {
+		"strings": {
+			"name": "string.quoted.double.ion",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"include": "#t4block"
+				},
+				{
+					"include": "#literalblock"
+				}
+			]
+		},
+		"flow-scalar-plain-in": {
+			"patterns": [
+				{
+					"include": "#flow-scalar-plain-in-implicit-type"
+				},
+				{
+					"match": "(?<=([a-zA-Z]=))\\S*",
+					"name": "string.unquoted.plain.in.ion"
+				}
+			]
+		},
+		"flow-scalar-plain-in-implicit-type": {
+			"patterns": [
+				{
+					"captures": {
+						"1": {
+							"name": "constant.language.null.ion"
+						},
+						"2": {
+							"name": "constant.language.boolean.ion"
+						},
+						"3": {
+							"name": "constant.numeric.integer.ion"
+						},
+						"4": {
+							"name": "constant.numeric.float.ion"
+						},
+						"5": {
+							"name": "constant.other.timestamp.ion"
+						},
+						"6": {
+							"name": "constant.language.value.ion"
+						},
+						"7": {
+							"name": "constant.language.merge.ion"
+						}
+					},
+					"match": "(?<=([a-zA-Z]=))(?x)\n (?x:\n (null|Null|NULL|~)\n | (y|Y|yes|Yes|YES|n|N|no|No|NO|true|True|TRUE|false|False|FALSE|on|On|ON|off|Off|OFF)\n | (\n (?:\n [-+]? 0b [0-1_]+ # (base 2)\n | [-+]? 0  [0-7_]+ # (base 8)\n  | [-+]? (?: 0|[1-9][0-9_]*) # (base 10)\n | [-+]? 0x [0-9a-fA-F_]+ # (base 16)\n | [-+]? [1-9] [0-9_]* (?: :[0-5]?[0-9])+ # (base 60)\n )\n )\n | (\n (?x:\n [-+]? (?: [0-9] [0-9_]*)? \\. [0-9.]* (?: [eE] [-+] [0-9]+)? # (base 10)\n | [-+]? [0-9] [0-9_]* (?: :[0-5]?[0-9])+ \\. [0-9_]* # (base 60)\n | [-+]? \\. (?: inf|Inf|INF) # (infinity)\n | \\. (?: nan|NaN|NAN) # (not a number)\n )\n )\n | (\n (?x:\n \\d{4} - \\d{2} - \\d{2} # (y-m-d)\n | \\d{4} # (year)\n - \\d{1,2} # (month)\n - \\d{1,2} # (day)\n (?: [Tt] | [ \\t]+) \\d{1,2} # (hour)\n : \\d{2} # (minute)\n : \\d{2} # (second)\n (?: \\.\\d*)? # (fraction)\n (?:\n (?:[ \\t]*) Z\n | [-+] \\d{1,2} (?: :\\d{1,2})?\n )? # (time zone)\n )\n )\n | (=)\n | (<<)\n )\n (?:\n (?!\\S \n)\n )\n"
+				}
+			]
+		},
+		"ion": {
+			"name": "meta.tag.ion",
+			"begin": "(</?)(?:([-\\w\\.]+)((:)))?([-\\w\\.:]+)",
+			"end": "(/?>)",
+			"captures": {
+				"1": {
+					"name": "punctuation.definition.tag.ion"
+				},
+				"2": {
+					"name": "entity.name.tag.namespace.ion"
+				},
+				"3": {
+					"name": "entity.name.tag.ion"
+				},
+				"4": {
+					"name": "punctuation.separator.namespace.ion"
+				},
+				"5": {
+					"name": "entity.name.tag.localname.ion"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#t4block"
+				},
+				{
+					"include": "#tags"
+				}
+			]
+		},
+		"element": {
+			"name": "entity.name.tag.ion",
+			"match": "^([\\sa-zA-Z.]*?\\.)?([\\sa-zA-Z]*?:)",
+			"captures": {
+				"1": {
+					"name": "assembly.name.tag.ion"
+				},
+				"2": {
+					"name": "entity.name.tag.ion"
+				}
+			}
+		},
+		"attribute": {
+			"name": "entity.other.attribute-name.ion",
+			"match": "[a-zA-Z]*?="
+		},
+		"ioncomment": {
+			"name": "comment.line.ion",
+			"match": "(#).*$\n?",
+			"captures": {
+				"1": {
+					"name": "comment.line.ion"
+				}
+			}
+		},
+		"t4directive": {
+			"name": "t4.block.ion",
+			"begin": "<#[+@]+",
+			"end": "#>",
+			"captures": {
+				"0": {
+					"name": "punctuation.section.embedded.t4.ion"
+				}
+			},
+			"patterns": [
+				{
+					"name": "constant.character.escape.ion",
+					"match": "template|assembly|import|include"
+				},
+				{
+					"include": "#tags"
+				}
+			]
+		},
+		"t4block": {
+			"name": "t4.embedded.ion",
+			"begin": "<#[+=]?",
+			"end": "#>",
+			"captures": {
+				"0": {
+					"name": "punctuation.section.embedded.t4.ion"
+				}
+			}
+		},
+		"tags": {
+			"patterns": [
+				{
+					"captures": {
+						"1": {
+							"name": "entity.other.attribute-name.namespace.ion"
+						},
+						"2": {
+							"name": "entity.other.attribute-name.ion"
+						},
+						"3": {
+							"name": "punctuation.separator.namespace.ion"
+						},
+						"4": {
+							"name": "entity.other.attribute-name.localname.ion"
+						}
+					},
+					"match": "(?:^|\\s+)(?:([-\\w.]+)((:)))?([-\\w.:]+)\\s*="
+				},
+				{
+					"include": "#strings"
+				}
+
+			]
+		},
+		"literalblock": {
+			"name": "literal.block.ion",
+			"begin": "<!",
+			"end": "!>"
+		}
+	},
+	"scopeName": "source.ion"
+}

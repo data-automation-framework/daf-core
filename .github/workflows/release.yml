@@ -1,0 +1,127 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - 'release/*'
+
+jobs:
+  build:
+    name: Build
+    runs-on: windows-latest
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+    steps:
+      # - name: Check PR labels action step
+      #   id: labelcheck
+      #   uses: shioyang/check-pr-labels-on-push-action@v1.0.3
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     labels: '["create-release"]'
+      # - name: Continue only if the create-release label exists, fail otherwise.
+      #   if: steps.labelcheck.outputs.result != 'true'
+      #   run: exit 1
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Avoid shallow clone so nbgv can do its work.
+      - name: Setup Nerdbank.GitVersioning
+        id: nbgv
+        uses: dotnet/nbgv@v0.4.0
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x # SDK Version to use.
+          source-url: https://nuget.pkg.github.com/data-automation-framework/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB }}
+      # - name: Build Daf Core
+      #   run: dotnet build --configuration Release
+      # - name: Run dotnet unit tests
+      #   run: dotnet test --configuration Release --nologo
+      # - name: Install NPM packages
+      #   working-directory: ./Daf.Core.VSCode
+      #   run: npm install
+      # - name: Install VSCE
+      #   working-directory: ./Daf.Core.VSCode
+      #   run: npm i -g vsce
+      # - name: Copy readme and license to VSCode directory
+      #   run: cp README.md Daf.Core.VSCode/README.md;cp LICENSE Daf.Core.VSCode/LICENSE
+      #   shell: bash
+      # - name: Build VsCode Extension
+      #   working-directory: ./Daf.Core.VSCode
+      #   run: vsce package -o daf-core.vsix
+      # - uses: actions/upload-artifact@v2
+      #   with:
+      #     name: daf-core-buildsystem
+      #     path: Daf.Core.VSCode/Daf.Core
+      # - name: Publish VsCode Extension
+      #   working-directory: ./Daf.Core.VSCode
+      #   run: vsce publish ${{ steps.nbgv.outputs.SimpleVersion }} -p ${{ secrets.VSCE }}
+      # - name: Setup MSBuild
+      #   uses: microsoft/setup-msbuild@v1
+      # - name: Build installer
+      #   working-directory: ./Installer/Installer
+      #   run: msbuild /property:Configuration=Release
+      # - uses: actions/upload-artifact@v2
+      #   with:
+      #     name: daf-core-installer
+      #     path: Installer/Installer/bin/Release/Installer.msi
+
+  release: # TODO: This whole step can be removed and merged into the previous step, softprops/action-gh-release no longer requires Linux.
+    needs: build
+    name: Create Release
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/release/*' # Only run this job in master and release branches.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Avoid shallow clone so nbgv can do its work.
+      - name: Setup Nerdbank.GitVersioning
+        id: nbgv
+        uses: dotnet/nbgv@v0.4.0
+      - name: Tag commit
+        uses: tvdias/github-tagger@v0.0.2
+        continue-on-error: true # github-tagger will crash if the tag already exists. Not a problem, continue anyway.
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          tag: v${{ steps.nbgv.outputs.SimpleVersion }}
+      # - name: Build changelog
+      #   id: build_changelog
+      #   uses: mikepenz/release-changelog-builder-action@v1.7.1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     failOnError: true
+      #     configuration: "configs/configuration.json"
+      #     toTag: v${{ steps.nbgv.outputs.SimpleVersion }}
+      # - uses: actions/download-artifact@v2
+      #   with:
+      #     name: daf-core-buildsystem
+      #     path: daf-core-buildsystem
+      # - uses: papeloto/action-zip@v1
+      #   with:
+      #     files: daf-core-buildsystem
+      #     recursive: true
+      #     dest: daf-core-buildsystem.zip
+      # - name: Create release
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     name: ${{ steps.nbgv.outputs.SimpleVersion }}
+      #     tag_name: v${{ steps.nbgv.outputs.SimpleVersion }}
+      #     body: ${{steps.build_changelog.outputs.changelog}}
+      #     files: 'daf-core-buildsystem.zip'
+      #     draft: false
+      #     prerelease: false
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB }}
+      - name: Move latest MajorMinor version tag
+        uses: EndBug/latest-tag@v1.4.0
+        with:
+          tag-name: v${{ steps.nbgv.outputs.MajorMinorVersion }}
+      - name: Move latest Major version tag
+        uses: EndBug/latest-tag@v1.4.0
+        with:
+          tag-name: v${{ steps.nbgv.outputs.VersionMajor }}

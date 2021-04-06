@@ -1,0 +1,11 @@
+﻿<Project>
+  <PropertyGroup>
+    <DafCorePreBuildPath>$(DafCoreRootPath)Dependencies\Daf.Core.PreBuild.exe</DafCorePreBuildPath>
+    <DafCorePath>$(DafCoreRootPath)Dependencies\Daf.Core.exe</DafCorePath>
+    <OutputPath>$(MSBuildProjectDirectory)\bin\$(Configuration)</OutputPath>
+    <StopBuildOnScriptErrors>true</StopBuildOnScriptErrors>
+    <FailedConnectionRetryCount>0</FailedConnectionRetryCount>
+    <BuildSqlOnly>false</BuildSqlOnly>
+    <VisualStudioEdition>Professional</VisualStudioEdition>
+  </PropertyGroup>
+</Project>

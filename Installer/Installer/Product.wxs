@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="*" Name="Daf Core" Language="1033" Version="!(bind.fileVersion.Daf.Core.exe)" Manufacturer="DataAutomationFramework" UpgradeCode="b6ac82b1-9567-416d-b23e-f352068a99ad">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perUser" InstallPrivileges="limited" />
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab="yes" />
+		<Feature Id="CustomProjectSystemFeature" Title="Build System" Level="1" Absent="disallow" AllowAdvertise="no">
+			<ComponentRef Id="DafCoreCustomProjectSystem" />
+			<ComponentRef Id="DafCoreCustomProjectSystemDependencies" />
+			<!--<ComponentRef Id="DafCoreCustomProjectSystemPlugins" />-->
+			<!--<ComponentRef Id="DafCoreCustomProjectSystemSql" />-->
+			<!--<ComponentRef Id="DafCoreCustomProjectSystemSsis" />-->
+			<!--<ComponentRef Id="DafCoreCustomProjectSystemSsisWorkaround" />-->
+			<!--<ComponentRef Id="DafCoreCustomProjectSystemAdf" />-->
+			<ComponentRef Id="DafCoreCustomProjectSystemRuntimes" />
+			<ComponentRef Id="DafCoreCustomProjectSystemWin" />
+			<ComponentRef Id="DafCoreCustomProjectSystemLib" />
+			<ComponentRef Id="DafCoreCustomProjectSystemNetCore" />
+			<ComponentRef Id="DafCoreCustomProjectSystemNetStandard" />
+		</Feature>
+		<Feature Id="ExtensionFeature" Title="VsCode Extension" Level="1" AllowAdvertise="no">
+			<ComponentRef Id="VSCodeExtension" />
+			<Condition Level="0">NO_VSCODE</Condition>
+		</Feature>
+		<UI Id="MyWixUI_Advanced">
+			<UIRef Id="WixUI_Advanced" />
+			<DialogRef Id="UserRegistrationDlg" />
+			<Publish Dialog="AdvancedWelcomeEulaDlg" Control="Advanced" Event="NewDialog" Value="UserRegistrationDlg" Order="1">!(wix.WixUISupportPerMachine) AND !(wix.WixUISupportPerUser)</Publish>
+			<Publish Dialog="InstallScopeDlg" Control="Back" Event="NewDialog" Value="UserRegistrationDlg">1</Publish>
+		</UI>
+		<WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
+		<Property Id="ApplicationFolderName" Value="My Application Folder" />
+		<Property Id="WixAppFolder" Value="WixPerUserFolder" />
+	</Product>
+	<Fragment>
+		<UI>
+			<Dialog Id="UserRegistrationDlg" Width="370" Height="270" Title="[ProductName] Setup" NoMinimize="yes">
+				<Control Id="VsCodeDirectoryLabel" Type="Text" X="45" Y="73" Width="100" Height="15" TabSkip="no" Text="&amp;VS Code root directory:" />
+				<Control Id="VsCodeDirectoryEdit" Type="Edit" X="45" Y="85" Width="220" Height="18" Property="VSCODEDIRECTORY" Text="{80}" />
+				<Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="&amp;Back">
+					<Publish Event="NewDialog" Value="AdvancedWelcomeEulaDlg">1</Publish>
+				</Control>
+				<Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="&amp;Next">
+					<Publish Event="NewDialog" Value="InstallScopeDlg">1</Publish>
+				</Control>
+				<Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
+					<Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+				</Control>
+				<Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="WixUI_Bmp_Banner" />
+				<Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes">
+					<Text>Please enter your VS Code root directory</Text>
+				</Control>
+				<Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+				<Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes">
+					<Text>{\WixUI_Font_Title}Visual Studio Code location</Text>
+				</Control>
+				<Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+			</Dialog>
+		</UI>
+	</Fragment>
+	<!--Fragment with details of installation directory-->
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="LocalAppDataFolder">
+				<Directory Id="ROOTDIRECTORY" Name="CustomProjectSystems">
+					<Directory Id="INSTALLFOLDER" Name="Daf.Core">
+						<Directory Id="DEPENDENCIESFOLDER" Name="Dependencies">
+							<Directory Id="RUNTIMESFOLDER" Name="runtimes">
+								<Directory Id="WINFOLDER" Name="win">
+									<Directory Id="LIBFOLDER" Name="lib">
+										<Directory Id="NETCOREAPPFOLDER" Name="netcoreapp3.0" />
+										<Directory Id="NETSTANDARDFOLDER" Name="netstandard2.0" />
+									</Directory>
+								</Directory>
+							</Directory>
+							<!--<Directory Id="PLUGINSFOLDER" Name="Plugins">
+								<Directory Id="SQLFOLDER" Name="Sql" />
+								<Directory Id="SSISFOLDER" Name="Ssis">
+									<Directory Id="SSISWORKAROUNDFOLDER" Name="Ssis.Workaround" />
+								</Directory>
+								<Directory Id="ADFFOLDER" Name="Adf" />
+							</Directory>-->
+						</Directory>
+					</Directory>
+				</Directory>
+			</Directory>
+		</Directory>
+	</Fragment>
+	<Fragment>
+		<Property Id="MsiLogging" Value="v" />
+		<!-- Custom project system -->
+		<ComponentGroup Id="CustomProjectSystem">
+			<Component Id="DafCoreCustomProjectSystem" Directory="INSTALLFOLDER" Guid="50D94E4E-B1F6-49EE-B0D7-FA8A35D033A6">
+				<RegistryValue Root='HKCU' Key='Software\DataAutomationFramework\DafCore'
+					Name='CustomProjectSystemFolder'
+					Value='[CustomProjectSystemFolder]'
+					Type='string'
+					KeyPath='yes' />
+				<File Id="Daf.Core.props" Source="..\..\bin\CustomProjectSystems\Daf.Core\Daf.Core.props" />
+				<File Id="Daf.Core.targets" Source="..\..\bin\CustomProjectSystems\Daf.Core\Daf.Core.targets" />
+				<RemoveFile Id="AllRootFiles" Name="*.*" On="both" />
+				<RemoveFolder Id="RemoveInstall" Directory="INSTALLFOLDER" On="both" />
+				<RemoveFolder Id="RemoveRoot" Directory="ROOTDIRECTORY" On="both" /> 
+			</Component>
+			<Component Id="DafCoreCustomProjectSystemDependencies" Directory="DEPENDENCIESFOLDER" Guid="48061520-CD5D-4514-8952-D9DFBC635D18">
+				<RegistryValue Root='HKCU' Key='Software\DataAutomationFramework\DafCore'
+					Name='CustomProjectSystemFolderDependencies'
+					Value='[CustomProjectSystemFolderDependencies]'
+					Type='string'
+					KeyPath='yes' />
+				<File Id="BuildTasks.deps.json" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\BuildTasks.deps.json" />
+				<File Id="BuildTasks.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\BuildTasks.dll" />
+				<File Id="Dependencies_CommandLine.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\CommandLine.dll" />
+				<File Id="Dependencies_ContribBclRanges.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Contrib.Bcl.Ranges.dll" />
+				<File Id="Daf.Core.deps.json" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Daf.Core.deps.json" />
+				<File Id="Daf.Core.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Daf.Core.dll" />
+				<File Id="Daf.Core.exe" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Daf.Core.exe" />
+				<File Id="Daf.Core.runtimeconfig.json" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Daf.Core.runtimeconfig.json" />
+				<File Id="Daf.Core.PreBuild.deps.json" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Daf.Core.PreBuild.deps.json" />
+				<File Id="Daf.Core.PreBuild.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Daf.Core.PreBuild.dll" />
+				<File Id="Daf.Core.PreBuild.exe" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Daf.Core.PreBuild.exe" />
+				<File Id="Daf.Core.PreBuild.runtimeconfig.json" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Daf.Core.PreBuild.runtimeconfig.json" />
+				<File Id="McMaster.NETCore.Plugins.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\McMaster.NETCore.Plugins.dll" />
+				<File Id="Daf.Core.Sdk.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Daf.Core.Sdk.dll" />
+				<File Id="Microsoft.Build.Framework.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Microsoft.Build.Framework.dll" />
+				<File Id="Microsoft.Build.Utilities.Core.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Microsoft.Build.Utilities.Core.dll" />
+				<File Id="Microsoft.DotNet.PlatformAbstractions.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Microsoft.DotNet.PlatformAbstractions.dll" /> <!-- For McMaster.NETCore.Plugins -->
+				<File Id="Microsoft.Extensions.DependencyModel.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Microsoft.Extensions.DependencyModel.dll" /> <!-- For McMaster.NETCore.Plugins -->
+				<File Id="Mono.TextTemplating.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Mono.TextTemplating.dll" />
+				<File Id="System.CodeDom.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\System.CodeDom.dll" />
+				<File Id="Utility.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Utility.dll" />
+				<File Id="Newtonsoft.Json.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Newtonsoft.Json.dll" /> <!-- Not sure what requires this, but something in does. -->
+				<File Id="Nuget.Common.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Nuget.Common.dll" />
+				<File Id="Nuget.Configuration.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Nuget.Configuration.dll" />
+				<File Id="Nuget.DependencyResolver.Core.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Nuget.DependencyResolver.Core.dll" />
+				<File Id="Nuget.Frameworks.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Nuget.Frameworks.dll" />
+				<File Id="Nuget.LibraryModel.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Nuget.LibraryModel.dll" />
+				<File Id="Nuget.Packaging.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Nuget.Packaging.dll" />
+				<File Id="Nuget.Packaging.Core.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Nuget.Packaging.Core.dll" />
+				<File Id="Nuget.Protocol.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Nuget.Protocol.dll" />
+				<File Id="Nuget.Resolver.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Nuget.Resolver.dll" />
+				<File Id="Nuget.Versioning.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Nuget.Versioning.dll" />
+				<RemoveFile Id="AllDependencyFiles" Name="*.*" On="both" />
+				<RemoveFolder Id="RemoveDependencies" Directory="DEPENDENCIESFOLDER" On="both" />
+			</Component>
+			<!--<Component Id="DafCoreCustomProjectSystemPlugins" Directory="PLUGINSFOLDER" Guid="DF83F828-9D3E-4F15-9095-3C741A53FC1D">
+				<RegistryValue Root='HKCU' Key='Software\DataAutomationFramework\DafCore'
+					Name='CustomProjectSystemFolderPlugins'
+					Value='[CustomProjectSystemFolderPlugins]'
+					Type='string'
+					KeyPath='yes' />
+				<RemoveFolder Id="RemovePlugins" Directory="PLUGINSFOLDER" On="both" />
+			</Component>-->
+			<!--<Component Id="DafCoreCustomProjectSystemSql" Directory="SQLFOLDER" Guid="2713B1A8-6B9F-4358-9DDB-7D5C3DDB9623">
+				<RegistryValue Root='HKCU' Key='Software\DataAutomationFramework\DafCore'
+					Name='CustomProjectSystemFolderSql'
+					Value='[CustomProjectSystemFolderSql]'
+					Type='string'
+					KeyPath='yes' />
+				<File Id="Sql.deps.json" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Plugins\Sql\Sql.deps.json" />
+				<File Id="Sql.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Plugins\Sql\Sql.dll" />
+				<File Id="Sql.xml" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Plugins\Sql\Sql.xml" />
+				<RemoveFile Id="AllSqlFiles" Name="*.*" On="both" />
+				<RemoveFolder Id="RemoveSql" Directory="SQLFOLDER" On="both" />
+			</Component>-->
+			<!--<Component Id="DafCoreCustomProjectSystemSsis" Directory="SSISFOLDER" Guid="E55F74A9-2B69-4FBE-BBF6-4B0F7EEBEF8B">
+				<RegistryValue Root='HKCU' Key='Software\DataAutomationFramework\DafCore'
+					Name='CustomProjectSystemFolderSsis'
+					Value='[CustomProjectSystemFolderSsis]'
+					Type='string'
+					KeyPath='yes' />
+				<File Id="Ssis.deps.json" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Plugins\Ssis\Ssis.deps.json" />
+				<File Id="Ssis.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Plugins\Ssis\Ssis.dll" />
+				<File Id="Ssis.xml" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Plugins\Ssis\Ssis.xml" />
+				<RemoveFile Id="AllSsisFiles" Name="*.*" On="both" />
+				<RemoveFolder Id="RemoveSsis" Directory="SSISFOLDER" On="both" />
+			</Component>
+			<Component Id="DafCoreCustomProjectSystemSsisWorkaround" Directory="SSISWORKAROUNDFOLDER" Guid="C96A6929-0F2B-4C15-A027-544C8223813B">
+				<RegistryValue Root='HKCU' Key='Software\DataAutomationFramework\DafCore'
+					Name='CustomProjectSystemFolderSsisWorkaround'
+					Value='[CustomProjectSystemFolderSsisWorkaround]'
+					Type='string'
+					KeyPath='yes' />
+				<File Id="SsisWorkaround_CommandLine.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Plugins\Ssis\Ssis.Workaround\CommandLine.dll" />
+				<File Id="SsisWorkaround_ContribBclRanges.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Plugins\Ssis\Ssis.Workaround\Contrib.Bcl.Ranges.dll" />
+				<File Id="SsisWorkaround_Daf_Core_Sdk.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Plugins\Ssis\Ssis.Workaround\Daf.Core.Sdk.dll" />
+				<File Id="SsisWorkaround.exe" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Plugins\Ssis\Ssis.Workaround\SsisWorkaround.exe" />
+				<File Id="SsisWorkaround.exe.config" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Plugins\Ssis\Ssis.Workaround\SsisWorkaround.exe.config" />
+				<File Id="Ssis.Wrapper.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Plugins\Ssis\Ssis.Workaround\Ssis.Wrapper.dll" />
+				<RemoveFile Id="AllSsisWorkaroundFiles" Name="*.*" On="both" />
+				<RemoveFolder Id="RemoveSsisWorkaround" Directory="SSISWORKAROUNDFOLDER" On="both" />
+			</Component>-->
+			<!--<Component Id="DafCoreCustomProjectSystemAdf" Directory="ADFFOLDER" Guid="65063E51-C79D-43B3-AD94-B668BF211CFE">
+				<RegistryValue Root='HKCU' Key='Software\DataAutomationFramework\DafCore'
+					Name='CustomProjectSystemFolderAdf'
+					Value='[CustomProjectSystemFolderAdf]'
+					Type='string'
+					KeyPath='yes' />
+				<File Id="Adf.deps.json" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Plugins\Adf\Adf.deps.json" />
+				<File Id="Adf.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Plugins\Adf\Adf.dll" />
+				<File Id="Adf.xml" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\Plugins\Adf\Adf.xml" />
+				<RemoveFile Id="AllAdfFiles" Name="*.*" On="both" />
+				<RemoveFolder Id="RemoveAdf" Directory="ADFFOLDER" On="both" />
+			</Component>-->
+			<Component Id="DafCoreCustomProjectSystemRuntimes" Directory="RUNTIMESFOLDER" Guid="52BD8F2D-C6DE-494E-A7F4-66815EDD31B5">
+				<RegistryValue Root='HKCU' Key='Software\DataAutomationFramework\DafCore'
+					Name='CustomProjectSystemFolderRuntimes'
+					Value='[CustomProjectSystemFolderRuntimes]'
+					Type='string'
+					KeyPath='yes' />
+				<RemoveFolder Id="RemoveRuntimes" Directory="RUNTIMESFOLDER" On="both" />
+			</Component>
+			<Component Id="DafCoreCustomProjectSystemWin" Directory="WINFOLDER" Guid="B289E40E-C9A0-49A7-81C4-6B7C8DC8F90C">
+				<RegistryValue Root='HKCU' Key='Software\DataAutomationFramework\DafCore'
+					Name='CustomProjectSystemFolderWin'
+					Value='[CustomProjectSystemFolderWin]'
+					Type='string'
+					KeyPath='yes' />
+				<RemoveFolder Id="RemoveWin" Directory="WINFOLDER" On="both" />
+			</Component>
+			<Component Id="DafCoreCustomProjectSystemLib" Directory="LIBFOLDER" Guid="8DD02E64-4BB1-4A46-989A-197B815E2093">
+				<RegistryValue Root='HKCU' Key='Software\DataAutomationFramework\DafCore'
+					Name='CustomProjectSystemFolderLib'
+					Value='[CustomProjectSystemFolderLib]'
+					Type='string'
+					KeyPath='yes' />
+				<RemoveFolder Id="RemoveLib" Directory="LIBFOLDER" On="both" />
+			</Component>
+			<Component Id="DafCoreCustomProjectSystemNetCore" Directory="NETCOREAPPFOLDER" Guid="D8CC08E7-F375-495F-8FC2-FD8BF4923B67">
+				<RegistryValue Root='HKCU' Key='Software\DataAutomationFramework\DafCore'
+					Name='CustomProjectSystemFolderNetCore'
+					Value='[CustomProjectSystemFolderNetCore]'
+					Type='string'
+					KeyPath='yes' />
+				<File Id="System.Security.Cryptography.Pkcs.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\runtimes\win\lib\netcoreapp3.0\System.Security.Cryptography.Pkcs.dll" />
+				<RemoveFile Id="AllNetCore" Name="*.*" On="both" />
+				<RemoveFolder Id="RemoveNetCore" Directory="NETCOREAPPFOLDER" On="both" />
+			</Component>
+			<Component Id="DafCoreCustomProjectSystemNetStandard" Directory="NETSTANDARDFOLDER" Guid="EC87F575-D90D-4380-88CF-CFC9D706CD60">
+				<RegistryValue Root='HKCU' Key='Software\DataAutomationFramework\DafCore'
+					Name='CustomProjectSystemFolderNetStandard'
+					Value='[CustomProjectSystemFolderNetStandard]'
+					Type='string'
+					KeyPath='yes' />
+				<File Id="System.Security.Cryptography.ProtectedData.dll" Source="..\..\bin\CustomProjectSystems\Daf.Core\Dependencies\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll" />
+				<RemoveFile Id="AllNetStandard" Name="*.*" On="both" />
+				<RemoveFolder Id="RemoveNetStandard" Directory="NETSTANDARDFOLDER" On="both" />
+			</Component>
+		</ComponentGroup>
+		<!-- VsCode Extension -->
+		<ComponentGroup Id="Extension">
+			<Component Id="VSCodeExtension" Directory="INSTALLFOLDER" Guid="2B8FF502-5B62-43EC-BB34-28237C177FFA">
+				<RegistryValue Root='HKCU' Key='Software\DataAutomationFramework\DafCore'
+					Name='VSCodeExtension'
+					Value='[VSCodeExtension]'
+					Type='string'
+					KeyPath='yes' />
+				<File Id="daf_core.vsix" Source="..\..\Daf.Core.VSCode\daf-core.vsix" />
+			</Component>
+		</ComponentGroup>
+		<!-- Check for a user install -->
+		<Property Id="VSCODEDIRECTORY">
+			<RegistrySearch Id="VsCodeLocation"
+							Root="HKCU"
+							Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\{771FD6B0-FA20-440A-A002-3B3BAC16DC50}_is1"
+							Name="InstallLocation"
+							Type="raw" Win64="yes" />
+		</Property>
+		<!-- Check for a machine install -->
+		<Property Id="VSCODEDIRECTORYSECONDARY">
+			<RegistrySearch Id="VsCodeLocationSecondary"
+							Root="HKLM"
+							Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\{EA457B21-F73E-494C-ACAB-524FDE069978}_is1"
+							Name="InstallLocation"
+							Type="raw" Win64="yes" />
+		</Property>
+		<SetProperty Id="VSCODEDIRECTORY" Sequence="both"
+			After="AppSearch"
+			Value="[VSCODEDIRECTORYSECONDARY]">NOT VSCODEDIRECTORY</SetProperty>
+		<Property Id="VsixInstaller" Value=" " />
+		<SetProperty Id="VsixInstaller" Sequence="both" After="CostFinalize" Value='"[VSCODEDIRECTORY]\bin\code.cmd" --install-extension "[INSTALLFOLDER]daf-core.vsix"' />
+		<CustomAction Id="VsixInstaller" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="deferred" Impersonate="yes" />
+		<Property Id="VsixUnInstaller" Value=" " />
+		<SetProperty Id="VsixUnInstaller" Sequence="both" After="CostFinalize" Value='"[VSCODEDIRECTORY]\bin\code.cmd" --uninstall-extension data-automation-framework.daf.core' />
+		<CustomAction Id="VsixUnInstaller" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="deferred" Impersonate="yes" />
+		<CustomAction Id='VsCodeMissing' Error="The Daf Core installer can't find your VS Code installation. Please restart the installer, selected Advanced and enter the directory manually." />
+		<InstallExecuteSequence>
+			<Custom Action='VsixInstaller' After='InstallFiles'>NOT Installed AND NOT NO_VSCODE</Custom>
+			<Custom Action='VsixUnInstaller' Before='RemoveFiles'>Installed AND NOT NO_VSCODE</Custom>
+			<Custom Action='VsCodeMissing' Before='InstallValidate'>NOT VSCODEDIRECTORY AND NOT NO_VSCODE</Custom>
+		</InstallExecuteSequence>
+	</Fragment>
+</Wix>
