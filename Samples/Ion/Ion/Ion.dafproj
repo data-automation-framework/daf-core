@@ -1,0 +1,22 @@
+<Project>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	</PropertyGroup>
+	<PropertyGroup Label="Globals">
+		<DafCoreRootPath>$(LocalAppData)\CustomProjectSystems\Daf.Core\</DafCoreRootPath>
+	</PropertyGroup>
+	<Import Project="$(DafCoreRootPath)Daf.Core.props" />
+	<ItemGroup>
+		<dafFile Include="**\*.daf" />
+		<ionFile Include="**\*.ion" />
+		<ionOutput Include="**\intermediate.ion">
+			<DependentUpon>%(Filename).ion</DependentUpon>
+		</ionOutput>
+		<csCompile Include="**\*.cs" />
+		<sqlFile Include="**\*.sql" Exclude="$(OutputPath)\**\*.sql" />
+	</ItemGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<Import Project="$(DafCoreRootPath)Daf.Core.targets" />
+</Project>

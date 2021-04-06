@@ -1,0 +1,9 @@
+SqlProjects: 
+	SqlProject: Name=SqlProject1 
+		Databases: 
+			Database: 	Name="Database1" 
+						TargetSqlServerPlatform=SqlServer 
+						TargetSqlServerVersion=SqlServer2019 
+						CreateProject=True
+				Schemas: 
+					Schema: Name="schema"

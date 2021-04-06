@@ -1,0 +1,6 @@
+---
+#test
+Sql:
+	<#@ include file="Database.daf"#>
+Ssis:
+	<#@ include file="includes\SsisInclude.daf"#>
