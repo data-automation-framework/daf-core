@@ -22,7 +22,7 @@ updates:
       timezone: "Europe/Stockholm"
   # Enable version updates for github actions
   - package-ecosystem: "github-actions"
-    # Look in the vscode extension directory
+    # Look in the root directory
     directory: "/"
     # Check for updates once a week
     schedule:
