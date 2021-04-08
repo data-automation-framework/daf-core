@@ -1,7 +1,7 @@
 ﻿// SPDX-License-Identifier: MIT
 // Copyright © 2021 Oscar Björhn, Petter Löfgren and contributors
 
-using System.Text;
+using System.Collections.Generic;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -21,17 +21,17 @@ namespace Daf.Core.BuildTasks
 
 		public override bool Execute()
 		{
-			StringBuilder stringBuilder = new();
+			List<string> keyValueStrings = new();
 
 			foreach (ITaskItem taskItem in InputProperties!)
 			{
 				string key = taskItem.GetMetadata("Identity");
 				string value = taskItem.GetMetadata("Value");
 
-				stringBuilder.Append($"{key}={value};");
+				keyValueStrings.Add($"{key}={value}");
 			}
 
-			Result = stringBuilder.ToString().TrimEnd(';');
+			Result = string.Join(';', keyValueStrings);
 
 			return true;
 		}
