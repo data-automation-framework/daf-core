@@ -406,9 +406,9 @@ namespace Daf.Core.LanguageServer.Model
 			{
 				projectDependencies.AddRange(ProjectDependencyHandler.GetProjectDependencies(projectFile));
 			}
-			catch (NugetDependencyNotFoundException dnfe)
+			catch (NugetDependencyNotFoundException ndnfe)
 			{
-				PluginParsingStatuses.Add(new PluginParsingStatus(OperationStatus.Warning, dnfe.Message));
+				PluginParsingStatuses.Add(new PluginParsingStatus(OperationStatus.Warning, ndnfe.Message));
 			}
 
 			foreach (ReferenceProjectDependency dep in projectDependencies.Where(d => d is ReferenceProjectDependency))
