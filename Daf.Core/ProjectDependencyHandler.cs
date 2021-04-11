@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using NuGet.Versioning;
+using Daf.Core.Exceptions;
 using Daf.Core.Sdk;
 
 namespace Daf.Core
@@ -17,6 +18,7 @@ namespace Daf.Core
 		public static List<ProjectDependency> GetProjectDependencies(string projectPath)
 		{
 			List<ProjectDependency> dependencies = new();
+			List<string> missingPackages = new();
 
 			// Add nuget references.
 			List<string> frameworkPriorities = new()
@@ -52,78 +54,88 @@ namespace Daf.Core
 
 					string libraryPath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}\.nuget\packages\{packageName.ToLower(CultureInfo.InvariantCulture)}";
 
-					List<string> packageVersionFolders = Directory.GetDirectories(libraryPath, "*").Select(x => new DirectoryInfo(x).Name).ToList();
-					List<NuGetVersion> nugetVersions = new();
-
-					foreach (string packageVersionFolder in packageVersionFolders)
+					if (Directory.Exists(libraryPath))
 					{
-						if (!NuGetVersion.TryParse(packageVersionFolder, out NuGetVersion nugetVersion))
-							throw new InvalidOperationException($"Nuget package version {packageVersionFolder} for package {packageName} doesn't appear to be a valid semantic version.");
-						else
-							nugetVersions.Add(nugetVersion);
-					}
+						List<string> packageVersionFolders = Directory.GetDirectories(libraryPath, "*").Select(x => new DirectoryInfo(x).Name).ToList();
+						List<NuGetVersion> nugetVersions = new();
 
-					// Sort descending.
-					nugetVersions.Sort((a, b) => b.CompareTo(a));
-
-					string projectVersion = FindStringBetweenStrings(line, "Version=\"", "\"");
-
-					// Attempt to figure out which version to match against, if wildcard matching is used.
-					if (projectVersion.Contains('*', StringComparison.Ordinal))
-					{
-						foreach (NuGetVersion version in nugetVersions)
+						foreach (string packageVersionFolder in packageVersionFolders)
 						{
-							if (version.ToString().Contains(projectVersion.Replace("*", string.Empty, StringComparison.Ordinal), StringComparison.Ordinal))
-							{
-								projectVersion = version.ToString();
-								break;
-							}
+							if (!NuGetVersion.TryParse(packageVersionFolder, out NuGetVersion nugetVersion))
+								throw new InvalidOperationException($"Nuget package version {packageVersionFolder} for package {packageName} doesn't appear to be a valid semantic version.");
+							else
+								nugetVersions.Add(nugetVersion);
 						}
-					}
 
-					// Figure out if this is a content-only library.
-					bool contentOnlyLibrary = Directory.Exists($@"{libraryPath}\{projectVersion}\contentFiles") && !Directory.Exists($@"{libraryPath}\{projectVersion}\lib");
+						// Sort descending.
+						nugetVersions.Sort((a, b) => b.CompareTo(a));
 
-					if (contentOnlyLibrary)
-					{
-						// DafCoreNugets.Add(packageName, $@"{libraryPath}\{projectVersion}\contentFiles\any\any");
-						ProjectDependency contentOnlyDep = new ContentOnlyProjectDependency(packageName, projectVersion, $@"{libraryPath}\{projectVersion}\contentFiles\any\any");
+						string projectVersion = FindStringBetweenStrings(line, "Version=\"", "\"");
 
-						dependencies.Add(contentOnlyDep);
-					}
-
-					if (!contentOnlyLibrary)
-					{
-						// Find all available framework targets.
-						List<string> frameworksInLibrary = Directory.GetDirectories($@"{libraryPath}\{projectVersion}\lib", "net*").Select(x => new DirectoryInfo(x).Name).ToList();
-						frameworksInLibrary.AddRange(Directory.GetDirectories($@"{libraryPath}\{projectVersion}\lib", "netcoreapp*").Select(x => new DirectoryInfo(x).Name).ToList());
-						frameworksInLibrary.AddRange(Directory.GetDirectories($@"{libraryPath}\{projectVersion}\lib", "netstandard*").Select(x => new DirectoryInfo(x).Name).ToList());
-
-						bool foundMatch = false;
-						foreach (string priority in frameworkPriorities)
+						// Attempt to figure out which version to match against, if wildcard matching is used.
+						if (projectVersion.Contains('*', StringComparison.Ordinal))
 						{
-							foreach (string foundFramework in frameworksInLibrary)
+							foreach (NuGetVersion version in nugetVersions)
 							{
-								if (priority == foundFramework)
+								if (version.ToString().Contains(projectVersion.Replace("*", string.Empty, StringComparison.Ordinal), StringComparison.Ordinal))
 								{
-									// Let's assume that there can only be one dll in a nuget library directory.
-									string packageLocation = Directory.GetFiles($@"{libraryPath}\{projectVersion}\lib\{foundFramework}", "*.dll").ToList()[0];
-
-									//Refs.Add(packageLocation);
-									ProjectDependency refDependency = new ReferenceProjectDependency(packageName, projectVersion, foundFramework, packageLocation);
-									dependencies.Add(refDependency);
-
-									foundMatch = true;
+									projectVersion = version.ToString();
 									break;
 								}
 							}
-
-							if (foundMatch)
-								break;
 						}
+
+						// Figure out if this is a content-only library.
+						bool contentOnlyLibrary = Directory.Exists($@"{libraryPath}\{projectVersion}\contentFiles") && !Directory.Exists($@"{libraryPath}\{projectVersion}\lib");
+
+						if (contentOnlyLibrary)
+						{
+							// DafCoreNugets.Add(packageName, $@"{libraryPath}\{projectVersion}\contentFiles\any\any");
+							ProjectDependency contentOnlyDep = new ContentOnlyProjectDependency(packageName, projectVersion, $@"{libraryPath}\{projectVersion}\contentFiles\any\any");
+
+							dependencies.Add(contentOnlyDep);
+						}
+
+						if (!contentOnlyLibrary)
+						{
+							// Find all available framework targets.
+							List<string> frameworksInLibrary = Directory.GetDirectories($@"{libraryPath}\{projectVersion}\lib", "net*").Select(x => new DirectoryInfo(x).Name).ToList();
+							frameworksInLibrary.AddRange(Directory.GetDirectories($@"{libraryPath}\{projectVersion}\lib", "netcoreapp*").Select(x => new DirectoryInfo(x).Name).ToList());
+							frameworksInLibrary.AddRange(Directory.GetDirectories($@"{libraryPath}\{projectVersion}\lib", "netstandard*").Select(x => new DirectoryInfo(x).Name).ToList());
+
+							bool foundMatch = false;
+							foreach (string priority in frameworkPriorities)
+							{
+								foreach (string foundFramework in frameworksInLibrary)
+								{
+									if (priority == foundFramework)
+									{
+										// Let's assume that there can only be one dll in a nuget library directory.
+										string packageLocation = Directory.GetFiles($@"{libraryPath}\{projectVersion}\lib\{foundFramework}", "*.dll").ToList()[0];
+
+										//Refs.Add(packageLocation);
+										ProjectDependency refDependency = new ReferenceProjectDependency(packageName, projectVersion, foundFramework, packageLocation);
+										dependencies.Add(refDependency);
+
+										foundMatch = true;
+										break;
+									}
+								}
+
+								if (foundMatch)
+									break;
+							}
+						}
+					}
+					else
+					{
+						missingPackages.Add(packageName);
 					}
 				}
 			}
+
+			if (missingPackages.Count > 0)
+				throw new NugetDependencyNotFoundException($"Could not find nuget packages {string.Join(", ", missingPackages)} in local nuget cache. Please build or restore the project.");
 
 			return dependencies;
 		}
