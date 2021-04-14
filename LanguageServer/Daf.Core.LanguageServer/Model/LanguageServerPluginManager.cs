@@ -1,6 +1,7 @@
 ﻿// SPDX-License-Identifier: MIT
 // Copyright © 2021 Oscar Björhn, Petter Löfgren and contributors
 
+using Daf.Core.Exceptions;
 using Daf.Core.LanguageServer.Exceptions;
 using Daf.Core.LanguageServer.Services;
 using Daf.Core.LanguageServer.Status;
@@ -395,11 +396,20 @@ namespace Daf.Core.LanguageServer.Model
 			return statuses;
 		}
 
-		private static List<string> GetNugetPlugins()
+		private List<string> GetNugetPlugins()
 		{
 			List<string> pluginPaths = new();
 			string projectFile = Properties.Instance.ProjectFilePath;
-			List<ProjectDependency> projectDependencies = ProjectDependencyHandler.GetProjectDependencies(projectFile);
+			List<ProjectDependency> projectDependencies = new();
+
+			try
+			{
+				projectDependencies.AddRange(ProjectDependencyHandler.GetProjectDependencies(projectFile));
+			}
+			catch (NugetDependencyNotFoundException ndnfe)
+			{
+				PluginParsingStatuses.Add(new PluginParsingStatus(OperationStatus.Warning, ndnfe.Message));
+			}
 
 			foreach (ReferenceProjectDependency dep in projectDependencies.Where(d => d is ReferenceProjectDependency))
 			{
