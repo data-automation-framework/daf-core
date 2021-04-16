@@ -21,7 +21,7 @@
     <PackageReference Include="NuGet.Configuration" Version="5.9.0" />
     <PackageReference Include="NuGet.DependencyResolver.Core" Version="5.9.0" />
     <PackageReference Include="NuGet.Frameworks" Version="5.9.1" />
-    <PackageReference Include="NuGet.Packaging.Core" Version="5.9.0" />
+    <PackageReference Include="NuGet.Packaging.Core" Version="5.9.1" />
     <PackageReference Include="NuGet.Protocol" Version="5.9.0" />
     <PackageReference Include="NuGet.Resolver" Version="5.9.0" />
     <PackageReference Include="NuGet.Versioning" Version="5.9.1" />
