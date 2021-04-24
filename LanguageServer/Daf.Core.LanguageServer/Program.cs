@@ -20,8 +20,6 @@ namespace Daf.Core.LanguageServer
 	{
 		public static async Task Main(string[] args)
 		{
-			System.Diagnostics.Debugger.Launch();
-
 			Parser.Default.ParseArguments<IonLanguageServerOptions>(args).WithParsed(options => SetProperties(options));
 
 			await StartUpAsync();
