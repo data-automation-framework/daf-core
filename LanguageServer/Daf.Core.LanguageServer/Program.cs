@@ -10,9 +10,7 @@ using Daf.Core.LanguageServer.Document;
 using Daf.Core.LanguageServer.Handlers;
 using Daf.Core.LanguageServer.Model;
 using Daf.Core.LanguageServer.Services;
-using Daf.Core.LanguageServer.Status;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -22,6 +20,8 @@ namespace Daf.Core.LanguageServer
 	{
 		public static async Task Main(string[] args)
 		{
+			System.Diagnostics.Debugger.Launch();
+
 			Parser.Default.ParseArguments<IonLanguageServerOptions>(args).WithParsed(options => SetProperties(options));
 
 			await StartUpAsync();
@@ -41,6 +41,7 @@ namespace Daf.Core.LanguageServer
 			lsOptions.WithHandler<IonHoverHandler>();
 			lsOptions.WithHandler<IonCompletionHandler>();
 			lsOptions.WithHandler<IonLinkHandler>();
+			lsOptions.WithHandler<ReloadPluginHandler>();
 			ILanguageServer ls = await OmniSharp.Extensions.LanguageServer.Server.LanguageServer.From(lsOptions);
 
 			await ls.WaitForExit;
@@ -56,14 +57,13 @@ namespace Daf.Core.LanguageServer
 		private static void ConfigureServices(IServiceCollection services)
 		{
 			LanguageServerPluginManager pm = new();
-			List<PluginParsingStatus> parsingStatuses = pm.LoadAssemblies(Properties.Instance.PluginFolder);
-			pm.PluginParsingStatuses.AddRange(parsingStatuses);
+			pm.LoadAssemblies(Properties.Instance.PluginFolder);
 
 			services.AddSingleton<IonDocumentManager>();
 			services.AddSingleton(m => pm);
 			services.AddSingleton<CompletionService>();
 			services.AddSingleton<HoverService>();
+			services.AddSingleton<ReloadPluginService>();
 		}
-
 	}
 }
