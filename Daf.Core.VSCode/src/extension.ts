@@ -49,7 +49,7 @@ export function activate(_context: vscode.ExtensionContext): void
 		// Abort if we don't have a workspace.
 		return;
 	}
-	
+
 	let projectFileDisposable = vscode.commands.registerCommand('daf.createProjectFile', () =>
 	{
 		createProjectFile();
