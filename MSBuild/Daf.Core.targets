@@ -1,5 +1,8 @@
 ﻿<Project>
   <ItemGroup>
+    <T4ParameterValues Include="BuildConfiguration">
+      <Value>$(Configuration)</Value>
+    </T4ParameterValues>
     <DafCoreProperties Include="StopBuildOnScriptErrors">
       <Value>$(StopBuildOnScriptErrors)</Value>
     </DafCoreProperties>
@@ -13,20 +16,6 @@
       <Value>$(VisualStudioEdition)</Value>
     </DafCoreProperties>
   </ItemGroup>
-  <ItemGroup>
-    <T4ParameterValues Include="BuildConfiguration">
-      <Value>$(Configuration)</Value>
-    </T4ParameterValues>
-  </ItemGroup>
-  <UsingTask TaskName="BuildTasks.PropertyBuilder" AssemblyFile="$(DafCoreRootPath)Dependencies\BuildTasks.dll" />
-  <Target Name="BeforeBuild">
-    <PropertyBuilder InputProperties="@(T4ParameterValues)">
-      <Output TaskParameter="Result" PropertyName="T4ProjectParameters" />
-    </PropertyBuilder>
-	<Exec Command="&quot;$(DafCorePreBuildPath)&quot; --projectfullpath &quot;$(MSBuildProjectFullPath)&quot; --parameters $(T4ProjectParameters)" ConsoleToMsBuild="true">
-	  <Output TaskParameter="ConsoleOutput" ItemName="ionIntermediate" />
-	</Exec>
-  </Target>
   <Target Name="Clean" Condition="Exists('$(OutputPath)')">
     <ItemGroup>
       <FilesToRemove Include="$(OutputPath)\**\*;intermediate.ion" />
@@ -35,12 +24,12 @@
     <Delete Files="@(FilesToRemove)" />
     <RemoveDir Directories="@(DirectoriesToRemove)" />
   </Target>
-  <Target Name="Build" DependsOnTargets="BeforeBuild" Condition="'@(ionIntermediate.Identity)'!=''">
+  <Target Name="Build">
     <PropertyBuilder InputProperties="@(DafCoreProperties)">
       <Output TaskParameter="Result" PropertyName="DafCoreProjectProperties" />
     </PropertyBuilder>
     <MakeDir Directories="$(OutputPath)" />
-    <Exec Command="&quot;$(DafCorePath)&quot; --intermediate &quot;%(ionIntermediate.Identity)&quot; --output &quot;$(OutputPath)\&quot; --parameters $(DafCoreProjectProperties)" />
+    <Exec Command="&quot;$(DafCorePath)&quot; --projectfullpath &quot;$(MSBuildProjectFullPath)&quot; --output &quot;$(OutputPath)\&quot; --parameters $(DafCoreProjectProperties)" />
   </Target>
   <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
 </Project>

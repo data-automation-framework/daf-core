@@ -8,7 +8,7 @@
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
   </PropertyGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy $(SolutionDir)BuildTasks\bin\$(Configuration)\$(TargetFramework) $(SolutionDir)bin\CustomProjectSystems\Daf.Core\Dependencies /y /i &gt; nul&#xD;&#xA;xcopy $(SolutionDir)Daf.Core.PreBuild\bin\$(Configuration)\$(TargetFramework) $(SolutionDir)bin\CustomProjectSystems\Daf.Core\Dependencies /y /i &gt; nul&#xD;&#xA;xcopy $(SolutionDir)Daf.Core\bin\$(Configuration)\$(TargetFramework) $(SolutionDir)bin\CustomProjectSystems\Daf.Core\Dependencies /y /i /s /EXCLUDE:$(SolutionDir)exclude-postbuild.txt &gt; nul&#xD;&#xA;xcopy $(SolutionDir)MSBuild $(SolutionDir)bin\CustomProjectSystems\Daf.Core /y /i &gt; nul" />
+    <Exec Command="xcopy $(SolutionDir)BuildTasks\bin\$(Configuration)\$(TargetFramework) $(SolutionDir)bin\CustomProjectSystems\Daf.Core\Dependencies /y /i &gt; nul&#xD;&#xA;xcopy $(SolutionDir)Daf.Core\bin\$(Configuration)\$(TargetFramework) $(SolutionDir)bin\CustomProjectSystems\Daf.Core\Dependencies /y /i /s /EXCLUDE:$(SolutionDir)exclude-postbuild.txt &gt; nul&#xD;&#xA;xcopy $(SolutionDir)MSBuild $(SolutionDir)bin\CustomProjectSystems\Daf.Core /y /i &gt; nul" />
   </Target>
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.9.0" />

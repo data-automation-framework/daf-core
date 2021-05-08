@@ -12,7 +12,7 @@ namespace Daf.Core.PreBuild
 	{
 		private const string OutFileName = "intermediate.ion";
 
-		public static int Main(string[] args)
+		public static int HandlePrebuild(string[] args)
 		{
 			string projectPath = string.Empty;
 			IEnumerable<string>? parameters = null;

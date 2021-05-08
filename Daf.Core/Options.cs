@@ -8,8 +8,8 @@ namespace Daf.Core
 {
 	public class Options
 	{
-		[Option('m', "intermediate", Required = true, HelpText = "The intermediate ion file to process.")]
-		public string IntermediateFile { get; init; } = string.Empty;
+		[Option('f', "projectfullpath", Required = true, HelpText = "The project's full path.")]
+		public string ProjectFullPath { get; init; } = string.Empty;
 
 		[Option('o', "output", Required = true, HelpText = "The build output directory.")]
 		public string OutputDirectory { get; init; } = string.Empty;

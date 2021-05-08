@@ -14,7 +14,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildTasks", "BuildTasks\BuildTasks.csproj", "{6105D57B-299F-42B0-AA93-19041AD86E10}"
 	ProjectSection(ProjectDependencies) = postProject
 		{309BA17B-292A-4910-BABE-FDAEB023B831} = {309BA17B-292A-4910-BABE-FDAEB023B831}
-		{51507EA1-A072-4734-8496-C5286FF89DFE} = {51507EA1-A072-4734-8496-C5286FF89DFE}
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utility", "Utility\Utility.csproj", "{6D0CDF90-C13E-49D1-9B7E-EAB85A43A657}"
@@ -27,8 +26,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daf.Core.LanguageServer", "
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daf.Core.LanguageServer.Tests", "LanguageServer\Daf.Core.LanguageServer.Tests\Daf.Core.LanguageServer.Tests.csproj", "{F51B52A9-897B-4470-89C9-6F89E0581288}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daf.Core.PreBuild", "Daf.Core.PreBuild\Daf.Core.PreBuild.csproj", "{51507EA1-A072-4734-8496-C5286FF89DFE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4C39B572-5B7B-4235-9E4A-1B49F1887036}"
 	ProjectSection(SolutionItems) = preProject
@@ -62,10 +59,6 @@ Global
 		{F51B52A9-897B-4470-89C9-6F89E0581288}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F51B52A9-897B-4470-89C9-6F89E0581288}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F51B52A9-897B-4470-89C9-6F89E0581288}.Release|Any CPU.Build.0 = Release|Any CPU
-		{51507EA1-A072-4734-8496-C5286FF89DFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{51507EA1-A072-4734-8496-C5286FF89DFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{51507EA1-A072-4734-8496-C5286FF89DFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{51507EA1-A072-4734-8496-C5286FF89DFE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
