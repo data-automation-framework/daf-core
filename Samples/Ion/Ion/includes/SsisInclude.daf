@@ -1,4 +1,26 @@
+<# int counter = 0; #>
 SsisProjects: 
-	SsisProject: Name="SsisProject"
+	SsisProject: Name="SsisProject" TargetSqlServerVersion=SqlServer2019 ProtectionLevel=DontSaveSensitive Password=""
+		Connections: 
+			FlatFileConnection: Name="FileConnection" ConnectionString=""
 		Packages: 
-			Package: Name="Package1"
+<# for (int i = 1; i <= 4; i++) { #>
+			Package: Name="Package_<#=i#>"
+				Variables: 
+					Variable: Name="Counter" DataType="Int32" Value="<#=counter#>"
+					Variable: Name="RowCounter" DataType="Int32" Value=0
+				Tasks: 
+					Expression: Name="Increment counter" ExpressionValue="@Counter = @Counter + 1"
+					SequenceContainer: Name="Container" 
+						PrecedenceConstraints: 
+							Inputs: 
+								InputPath: OutputPathName="Increment counter"
+						Tasks: 
+							DataFlow: Name="Data flow"
+								Components: 
+									FlatFileSource: Name="Flat file source" ConnectionName="FileConnection" 
+										FlatFileSourceColumns: 
+											DataFlowColumnMapping: SourceColumn="ID" TargetColumn="ID" 
+									RowCount: Name="Count" VariableName="RowCounter" 
+										DataFlowInputPath: OutputPathName="Flat file source"
+<# } #>

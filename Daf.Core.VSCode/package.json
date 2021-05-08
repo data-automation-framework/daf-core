@@ -21,6 +21,7 @@
 		"onCommand:workbench.action.tasks.runTask",
 		"onCommand:daf.createProjectFile",
 		"onCommand:createUserFile",
+		"onCommand:reloadPlugins",
 		"onLanguage:ion"
 	],
 	"main": "./out/extension.js",
@@ -33,6 +34,10 @@
 			{
 				"command": "daf.createUserFile",
 				"title": "Create a .dafproj.user file for overriding build parameters."
+			},
+			{
+				"command": "daf.reloadPlugins",
+				"title": "Reload Daf plugins"
 			}
 		],
 		"configuration": {

@@ -17,6 +17,10 @@
 		<csCompile Include="**\*.cs" />
 		<sqlFile Include="**\*.sql" Exclude="$(OutputPath)\**\*.sql" />
 	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Daf.Core.Sql" Version="0.0.4" />
+		<PackageReference Include="Daf.Core.Ssis" Version="0.0.5" />
+	</ItemGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<Import Project="$(DafCoreRootPath)Daf.Core.targets" />
 </Project>

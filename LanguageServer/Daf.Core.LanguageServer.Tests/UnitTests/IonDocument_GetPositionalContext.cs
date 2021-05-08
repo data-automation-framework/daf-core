@@ -88,14 +88,14 @@ namespace Daf.Core.LanguageServerTests.UnitTests
 		}
 
 		[Fact]
-		internal void CursorAt_NodeAtFirstLine_ReturnsUnknown()
+		internal void CursorAt_NodeAtFirstLine_ReturnsAtNodename()
 		{
 			IonDocument document = new("RootNode:", new Uri(Constants.DummyRootNodeFileUri));
 			int cursorPosition = 5; //At the root node name
 
 			DocumentContext dcActual = document.GetPositionalContext(cursorPosition);
 
-			Assert.Equal(PositionalContext.Unknown, dcActual.Context);
+			Assert.Equal(PositionalContext.AtNodeName, dcActual.Context);
 		}
 	}
 }
