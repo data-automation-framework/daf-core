@@ -240,9 +240,12 @@ async function createUserFile(): Promise<void>
 
 async function reloadPlugins(): Promise<void>
 {
-	if (lspClient != undefined){
+	if (lspClient != undefined)
+	{
 		lspClient.sendRequest('daf/reloadplugins');
-	} else {
+	}
+	else
+	{
 		vscode.window.showInformationMessage('Cannot reload Daf plugins, language server has not been initiated.');
 	}
 }
