@@ -27,11 +27,14 @@ Create new Daf project after having installed the extension:
   ```
   <ItemGroup>
     <PackageReference Include="Daf.Core.Ssis" Version="*" />
-  <ItemGroup>
+  </ItemGroup>
   ```
+* Build the project to download/restore the plugin from nuget.
 * Add a new root file with extension .daf. The first line in this file must contain three dashes (---) to indicate that it is the root file of the solution.
+* Run command  _Reload Daf plugins_ from the command pallete to enable auto completion (only required after adding new plugins or plugin versions).
 * Start coding:
-  ![demo](https://user-images.githubusercontent.com/1073539/112722549-93613b80-8f0a-11eb-9495-2786007df9ff.gif)
+
+  ![demo2](https://user-images.githubusercontent.com/1073539/116812909-865eea00-ab51-11eb-8a8b-edf29592f37b.gif)
 * Build the project (Ctrl+Shift+B) and select an appropiate build action, e.g. _Build Dev (Full)_.
 * For the standard plugins, the output is generated in the underlying bin folder.
 
@@ -39,4 +42,5 @@ Also see the sample projects in this repository.
 
 ## Links
 [Daf organization](https://github.com/data-automation-framework)
+
 [Documentation](https://data-automation-framework.com)

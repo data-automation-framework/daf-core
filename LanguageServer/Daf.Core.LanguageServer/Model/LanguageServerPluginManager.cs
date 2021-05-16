@@ -324,8 +324,10 @@ namespace Daf.Core.LanguageServer.Model
 			return found;
 		}
 
-		public List<PluginParsingStatus> LoadAssemblies(string localFolder)
+		public void LoadAssemblies(string localFolder)
 		{
+			PluginParsingStatuses.Clear();
+
 			List<PluginParsingStatus> statuses = new();
 
 			List<string> nugetPluginPaths = GetNugetPlugins();
@@ -362,6 +364,13 @@ namespace Daf.Core.LanguageServer.Model
 					try
 					{
 						PluginAssembly pa = new(Assembly.LoadFile(file));
+
+						//Remove the plugin if it has been added since earlier to enable reload of other versions of the plugin
+						if (Assemblies.ContainsKey(pa.RootNodeNameFull))
+						{
+							Assemblies.Remove(pa.RootNodeNameFull);
+						}
+
 						Assemblies.Add(pa.RootNodeNameFull, pa);
 
 						string docFile = Path.ChangeExtension(file, ".xml");
@@ -393,7 +402,7 @@ namespace Daf.Core.LanguageServer.Model
 				}
 			}
 
-			return statuses;
+			PluginParsingStatuses.AddRange(statuses);
 		}
 
 		private List<string> GetNugetPlugins()

@@ -93,74 +93,81 @@ namespace Daf.Core.LanguageServer.Document
 				ParentNodeStartPosition = GetParentNodePosition(absolutePosition, startLevel, true)
 			};
 
+			int startPosition;
+
 			if (context.ParentNodeStartPosition != -1)
-				context.NodeStartFound = true;
-
-			if (context.NodeStartFound)
 			{
-				bool inQuotedString = false;
-				bool inT4Code = false;
-				bool inComment = false;
-				bool searchFieldName = false;
-				bool nodeNameParsed = false;
-				context.Context = PositionalContext.AtNodeName;
+				context.NodeStartFound = true;
+				startPosition = context.ParentNodeStartPosition;
+			}
+			else
+			{
+				startPosition = GetStartOfLinePosition(absolutePosition);
+			}
 
-				//Parse from the node start up to caret position
-				for (int i = context.ParentNodeStartPosition; i <= absolutePosition; i++)
+
+			bool inQuotedString = false;
+			bool inT4Code = false;
+			bool inComment = false;
+			bool searchFieldName = false;
+			bool nodeNameParsed = false;
+			context.Context = PositionalContext.AtNodeName;
+
+			//Parse from the node start up to caret position
+			for (int i = startPosition; i <= absolutePosition; i++)
+			{
+				char c = Content[i];
+				if (c == '"' && !inQuotedString)
+					inQuotedString = true;
+				else if (c == '"' && inQuotedString)
+					inQuotedString = false;
+
+				if (c == '<' && i + 1 < Content.Length - 1 && Content[i + 1] == '#')
+					inT4Code = true;
+				else if (c == '>' && i - 1 > 0 && Content[i - 1] == '#')
+					inT4Code = false;
+
+				if (c == '#' && !inQuotedString && !inT4Code && context.Context != PositionalContext.AtFieldValue)
+					inComment = true;
+				else if (inComment && (c == '\n' || c == '\r'))
+					inComment = false;
+
+				if (!inQuotedString && !inT4Code && !inComment)
 				{
-					char c = Content[i];
-					if (c == '"' && !inQuotedString)
-						inQuotedString = true;
-					else if (c == '"' && inQuotedString)
-						inQuotedString = false;
-
-					if (c == '<' && i + 1 < Content.Length - 1 && Content[i + 1] == '#')
-						inT4Code = true;
-					else if (c == '>' && i - 1 > 0 && Content[i - 1] == '#')
-						inT4Code = false;
-
-					if (c == '#' && !inQuotedString && !inT4Code && context.Context != PositionalContext.AtFieldValue)
-						inComment = true;
-					else if (inComment && (c == '\n' || c == '\r'))
-						inComment = false;
-
-					if (!inQuotedString && !inT4Code && !inComment)
+					if (c == ':' && !nodeNameParsed && i + 1 < absolutePosition)    //Reached past the node name
 					{
-						if (c == ':' && !nodeNameParsed && i + 1 < absolutePosition)    //Reached past the node name
-						{
-							nodeNameParsed = true;
-							searchFieldName = true;
-							context.Context = PositionalContext.AtFieldName;
-						}
-						else if (c == ':' && nodeNameParsed)
-						{
-							context.IntermediaryNodes = true;
-						}
-						else if (c == '=')
-						{
-							context.Context = PositionalContext.AtFieldValue;
-						}
-						else if (Char.IsWhiteSpace(c) && context.Context == PositionalContext.AtFieldValue)
-						{
-							searchFieldName = true;
-							context.Context = PositionalContext.AtFieldName;
-						}
-						else if (!Char.IsWhiteSpace(c) && searchFieldName)
-						{
-							searchFieldName = false;
-							context.FieldNameStartPosition = i;
-						}
+						nodeNameParsed = true;
+						searchFieldName = true;
+						context.Context = PositionalContext.AtFieldName;
+					}
+					else if (c == ':' && nodeNameParsed)
+					{
+						context.IntermediaryNodes = true;
+					}
+					else if (c == '=')
+					{
+						context.Context = PositionalContext.AtFieldValue;
+					}
+					else if (Char.IsWhiteSpace(c) && context.Context == PositionalContext.AtFieldValue)
+					{
+						searchFieldName = true;
+						context.Context = PositionalContext.AtFieldName;
+					}
+					else if (!Char.IsWhiteSpace(c) && searchFieldName)
+					{
+						searchFieldName = false;
+						context.FieldNameStartPosition = i;
 					}
 				}
-
-				//Assume that caret is in field value if it is placed within a quoted string outside of a T4 code block
-				if (inQuotedString && !inT4Code && !inComment)
-					context.Context = PositionalContext.AtFieldValue;
-				else if (inT4Code)
-					context.Context = PositionalContext.AtT4Code;
-				else if (inComment)
-					context.Context = PositionalContext.AtComment;
 			}
+
+			//Assume that caret is in field value if it is placed within a quoted string outside of a T4 code block
+			if (inQuotedString && !inT4Code && !inComment)
+				context.Context = PositionalContext.AtFieldValue;
+			else if (inT4Code)
+				context.Context = PositionalContext.AtT4Code;
+			else if (inComment)
+				context.Context = PositionalContext.AtComment;
 
 			if (context.FieldNameStartPosition != -1)
 				context.FieldNameFound = true;

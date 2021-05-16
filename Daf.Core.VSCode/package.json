@@ -11,7 +11,7 @@
 		"url": "https://github.com/data-automation-framework/daf-core.git"
 	},
 	"engines": {
-		"vscode": "^1.55.0"
+		"vscode": "^1.56.0"
 	},
 	"categories": [
 		"Programming Languages",
@@ -21,6 +21,7 @@
 		"onCommand:workbench.action.tasks.runTask",
 		"onCommand:daf.createProjectFile",
 		"onCommand:createUserFile",
+		"onCommand:reloadPlugins",
 		"onLanguage:ion"
 	],
 	"main": "./out/extension.js",
@@ -33,6 +34,10 @@
 			{
 				"command": "daf.createUserFile",
 				"title": "Create a .dafproj.user file for overriding build parameters."
+			},
+			{
+				"command": "daf.reloadPlugins",
+				"title": "Reload Daf plugins"
 			}
 		],
 		"configuration": {
@@ -126,13 +131,13 @@
 	"devDependencies": {
 		"@types/glob": "^7.1.3",
 		"@types/mocha": "^8.2.2",
-		"@types/node": "^14.14.41",
-		"@types/vscode": "^1.55.0",
-		"@typescript-eslint/eslint-plugin": "^4.22.0",
-		"@typescript-eslint/parser": "^4.22.0",
-		"eslint": "^7.24.0",
+		"@types/node": "^15.0.2",
+		"@types/vscode": "^1.56.0",
+		"@typescript-eslint/eslint-plugin": "^4.22.1",
+		"@typescript-eslint/parser": "^4.22.1",
+		"eslint": "^7.25.0",
 		"glob": "^7.1.6",
-		"mocha": "^8.3.2",
+		"mocha": "^8.4.0",
 		"typescript": "^4.2.4",
 		"vscode-test": "^1.5.2"
 	}

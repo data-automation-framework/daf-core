@@ -39,6 +39,8 @@ var userFile =
 
 let taskProvider: vscode.Disposable | undefined;
 
+let lspClient: LanguageClient | undefined;
+
 export function activate(_context: vscode.ExtensionContext): void
 {
 	let workspaceRoot = vscode.workspace.workspaceFolders![0];
@@ -65,6 +67,16 @@ export function activate(_context: vscode.ExtensionContext): void
 	});
 
 	_context.subscriptions.push(userFileDisposable);
+	
+
+	let reloadPluginsDisposable = vscode.commands.registerCommand('daf.reloadPlugins', () =>
+	{
+		reloadPlugins();
+
+		vscode.window.showInformationMessage('Reloaded Daf plugins.');
+	});
+
+	_context.subscriptions.push(reloadPluginsDisposable);
 
 	let dafPromise: Thenable<vscode.Task[]> | undefined = undefined;
 	
@@ -84,7 +96,7 @@ export function activate(_context: vscode.ExtensionContext): void
 			return undefined;
 		}
 	});
-	
+
 	//Language server client 
 	loadLanguageServer(_context, workspaceRoot);
 }
@@ -132,6 +144,8 @@ async function loadLanguageServer(_context: vscode.ExtensionContext, workspaceRo
 	const client: LanguageClient = new LanguageClient('LSP', 'Daf Core Language Server', serverOptions, clientOptions);
 	client.trace = Trace.Verbose;
 	let disposable = client.start();
+
+	lspClient = client;
 
 	_context.subscriptions.push(disposable);
 }
@@ -222,6 +236,18 @@ async function createUserFile(): Promise<void>
 			}
 		});
 	});
+}
+
+async function reloadPlugins(): Promise<void>
+{
+	if (lspClient != undefined)
+	{
+		lspClient.sendRequest('daf/reloadplugins');
+	}
+	else
+	{
+		vscode.window.showInformationMessage('Cannot reload Daf plugins, language server has not been initiated.');
+	}
 }
 
 export function deactivate(): void

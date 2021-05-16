@@ -10,6 +10,7 @@ using System.Reflection;
 using NuGet.Versioning;
 using Daf.Core.Exceptions;
 using Daf.Core.Sdk;
+using McMaster.NETCore.Plugins;
 
 namespace Daf.Core
 {
@@ -19,6 +20,7 @@ namespace Daf.Core
 		{
 			List<ProjectDependency> dependencies = new();
 			List<string> missingPackages = new();
+			List<string> missingPackageVersions = new();
 
 			// Add nuget references.
 			List<string> frameworkPriorities = new()
@@ -85,46 +87,53 @@ namespace Daf.Core
 							}
 						}
 
-						// Figure out if this is a content-only library.
-						bool contentOnlyLibrary = Directory.Exists($@"{libraryPath}\{projectVersion}\contentFiles") && !Directory.Exists($@"{libraryPath}\{projectVersion}\lib");
-
-						if (contentOnlyLibrary)
+						if (Directory.Exists($@"{libraryPath}\{projectVersion}\") || projectVersion.Contains('*', StringComparison.Ordinal))
 						{
-							// DafCoreNugets.Add(packageName, $@"{libraryPath}\{projectVersion}\contentFiles\any\any");
-							ProjectDependency contentOnlyDep = new ContentOnlyProjectDependency(packageName, projectVersion, $@"{libraryPath}\{projectVersion}\contentFiles\any\any");
+							// Figure out if this is a content-only library.
+							bool contentOnlyLibrary = Directory.Exists($@"{libraryPath}\{projectVersion}\contentFiles") && !Directory.Exists($@"{libraryPath}\{projectVersion}\lib");
 
-							dependencies.Add(contentOnlyDep);
-						}
-
-						if (!contentOnlyLibrary)
-						{
-							// Find all available framework targets.
-							List<string> frameworksInLibrary = Directory.GetDirectories($@"{libraryPath}\{projectVersion}\lib", "net*").Select(x => new DirectoryInfo(x).Name).ToList();
-							frameworksInLibrary.AddRange(Directory.GetDirectories($@"{libraryPath}\{projectVersion}\lib", "netcoreapp*").Select(x => new DirectoryInfo(x).Name).ToList());
-							frameworksInLibrary.AddRange(Directory.GetDirectories($@"{libraryPath}\{projectVersion}\lib", "netstandard*").Select(x => new DirectoryInfo(x).Name).ToList());
-
-							bool foundMatch = false;
-							foreach (string priority in frameworkPriorities)
+							if (contentOnlyLibrary)
 							{
-								foreach (string foundFramework in frameworksInLibrary)
-								{
-									if (priority == foundFramework)
-									{
-										// Let's assume that there can only be one dll in a nuget library directory.
-										string packageLocation = Directory.GetFiles($@"{libraryPath}\{projectVersion}\lib\{foundFramework}", "*.dll").ToList()[0];
+								// DafCoreNugets.Add(packageName, $@"{libraryPath}\{projectVersion}\contentFiles\any\any");
+								ProjectDependency contentOnlyDep = new ContentOnlyProjectDependency(packageName, projectVersion, $@"{libraryPath}\{projectVersion}\contentFiles\any\any");
 
-										//Refs.Add(packageLocation);
-										ProjectDependency refDependency = new ReferenceProjectDependency(packageName, projectVersion, foundFramework, packageLocation);
-										dependencies.Add(refDependency);
-
-										foundMatch = true;
-										break;
-									}
-								}
-
-								if (foundMatch)
-									break;
+								dependencies.Add(contentOnlyDep);
 							}
+
+							if (!contentOnlyLibrary)
+							{
+								// Find all available framework targets.
+								List<string> frameworksInLibrary = Directory.GetDirectories($@"{libraryPath}\{projectVersion}\lib", "net*").Select(x => new DirectoryInfo(x).Name).ToList();
+								frameworksInLibrary.AddRange(Directory.GetDirectories($@"{libraryPath}\{projectVersion}\lib", "netcoreapp*").Select(x => new DirectoryInfo(x).Name).ToList());
+								frameworksInLibrary.AddRange(Directory.GetDirectories($@"{libraryPath}\{projectVersion}\lib", "netstandard*").Select(x => new DirectoryInfo(x).Name).ToList());
+
+								bool foundMatch = false;
+								foreach (string priority in frameworkPriorities)
+								{
+									foreach (string foundFramework in frameworksInLibrary)
+									{
+										if (priority == foundFramework)
+										{
+											// Let's assume that there can only be one dll in a nuget library directory.
+											string packageLocation = Directory.GetFiles($@"{libraryPath}\{projectVersion}\lib\{foundFramework}", "*.dll").ToList()[0];
+
+											//Refs.Add(packageLocation);
+											ProjectDependency refDependency = new ReferenceProjectDependency(packageName, projectVersion, foundFramework, packageLocation);
+											dependencies.Add(refDependency);
+
+											foundMatch = true;
+											break;
+										}
+									}
+
+									if (foundMatch)
+										break;
+								}
+							}
+						}
+						else
+						{
+							missingPackageVersions.Add(packageName + " " + projectVersion);
 						}
 					}
 					else
@@ -136,6 +145,9 @@ namespace Daf.Core
 
 			if (missingPackages.Count > 0)
 				throw new NugetDependencyNotFoundException($"Could not find nuget packages {string.Join(", ", missingPackages)} in local nuget cache. Please build or restore the project.");
+
+			if (missingPackageVersions.Count > 0)
+				throw new NugetDependencyNotFoundException($"Could not find nuget package versions {string.Join(", ", missingPackageVersions)} in local nuget cache. Please build or restore the project.");
 
 			return dependencies;
 		}
@@ -218,27 +230,44 @@ namespace Daf.Core
 
 		public static bool IsPlugin(string assemblyPath)
 		{
-			Assembly asm = Assembly.LoadFrom(assemblyPath);
+			bool isPlugin = false;
+
+			PluginConfig pc = new(assemblyPath);
+			pc.IsUnloadable = true;
+
+			PluginLoader loader = new(pc);
+			loader.LoadAssemblyFromPath(assemblyPath);
+			Assembly asm = loader.LoadDefaultAssembly();
 
 			//Check if the nuget dll is a plugin
 			if (asm.GetTypes().Any(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract))
 			{
-				return true;
+				isPlugin = true;
 			}
 
-			return false;
+			loader.Dispose();
+
+			return isPlugin;
 		}
 
 		private static List<IPlugin> GetPlugins(string assemblyPath)
 		{
 			List<IPlugin> plugins = new();
-			Assembly asm = Assembly.LoadFrom(assemblyPath);
+
+			PluginConfig pc = new(assemblyPath);
+			pc.IsUnloadable = true;
+
+			PluginLoader loader = new(pc);
+			loader.LoadAssemblyFromPath(assemblyPath);
+			Assembly asm = loader.LoadDefaultAssembly();
 
 			foreach (Type pluginType in asm.GetTypes().Where(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract))
 			{
 				IPlugin plugin = (IPlugin)Activator.CreateInstance(pluginType)!;
 				plugins.Add(plugin);
 			}
+
+			loader.Dispose();
 
 			return plugins;
 		}
