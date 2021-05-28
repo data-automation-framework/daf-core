@@ -166,7 +166,7 @@ namespace Daf.Core
 			foreach (IPlugin localPlugin in localPlugins)
 			{
 				//Check if a nuget plugin already exist
-				IPlugin? alreadyExists = nugetPlugins.Where(p => p.Name == localPlugin.Name).FirstOrDefault();
+				IPlugin? alreadyExists = nugetPlugins.FirstOrDefault(p => p.Name == localPlugin.Name);
 
 				if (alreadyExists == null)
 					validPlugins.Add(localPlugin);
@@ -209,7 +209,7 @@ namespace Daf.Core
 				foreach (IPlugin localPlugin in localPlugins)
 				{
 					//Check if a nuget plugin already exist
-					IPlugin? alreadyExists = nugetPlugins.Where(p => p.Name == localPlugin.Name).FirstOrDefault();
+					IPlugin? alreadyExists = nugetPlugins.FirstOrDefault(p => p.Name == localPlugin.Name);
 
 					if (alreadyExists != null)
 					{

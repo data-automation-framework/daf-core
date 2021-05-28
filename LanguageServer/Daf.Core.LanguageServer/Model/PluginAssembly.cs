@@ -425,8 +425,8 @@ namespace Daf.Core.LanguageServer.Model
 		{
 			foreach (PendingChild pc in pendingChildren)
 			{
-				IonNode parentNode = nodes.Where(n => n == pc.ParentNode).First();
-				IonNode childNode = nodes.Where(n => n.ClassNameFull == pc.ClassNameFull).First().Clone();
+				IonNode parentNode = nodes.First(n => n == pc.ParentNode);
+				IonNode childNode = nodes.First(n => n.ClassNameFull == pc.ClassNameFull).Clone();
 				childNode.NodeName = pc.ChildNodeName;
 				childNode.ParentNode = pc.ParentNode;
 				parentNode.Children.Add(childNode);
