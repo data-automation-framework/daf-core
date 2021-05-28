@@ -144,7 +144,7 @@ namespace Daf.Core
 					FrameworkReducer frameworkReducer = new();
 					NuGetFramework nearestFramework = frameworkReducer.GetNearest(framework, nuspec.GetDependencyGroups().Select(dg => dg.TargetFramework));
 
-					FrameworkSpecificGroup libItems = packageReader.GetLibItems().Where(x => x.TargetFramework == nearestFramework).First();
+					FrameworkSpecificGroup libItems = packageReader.GetLibItems().First(x => x.TargetFramework == nearestFramework);
 
 					foreach (string assemblyRelativePath in libItems.Items)
 					{
