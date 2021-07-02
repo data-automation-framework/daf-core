@@ -11,12 +11,12 @@
   <ItemGroup>
     <PackageReference Include="Daf.Core.Sdk" Version="0.0.8" />
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
-    <PackageReference Include="McMaster.NETCore.Plugins" Version="1.3.1" />
-    <PackageReference Include="Nerdbank.GitVersioning" Version="3.4.194">
+    <PackageReference Include="McMaster.NETCore.Plugins" Version="1.4.0" />
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.4.220">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="OmniSharp.Extensions.LanguageServer" Version="0.19.1" />
+    <PackageReference Include="OmniSharp.Extensions.LanguageServer" Version="0.19.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Daf.Core\Daf.Core.csproj" />
