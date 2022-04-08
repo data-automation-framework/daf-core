@@ -50,7 +50,7 @@ jobs:
       - name: Build VsCode Extension
         working-directory: ./Daf.Core.VSCode
         run: vsce package -o daf-core.vsix
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: daf-core-buildsystem
           path: Daf.Core.VSCode/Daf.Core
@@ -62,7 +62,7 @@ jobs:
       # - name: Build installer
       #   working-directory: ./Installer/Installer
       #   run: msbuild /property:Configuration=Release
-      # - uses: actions/upload-artifact@v2
+      # - uses: actions/upload-artifact@v3
       #   with:
       #     name: daf-core-installer
       #     path: Installer/Installer/bin/Release/Installer.msi

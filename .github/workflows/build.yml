@@ -53,11 +53,11 @@ jobs:
           files: Daf.Core.VSCode/Daf.Core
           recursive: true
           dest: daf-core-buildsystem.zip
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: daf-core-buildsystem
           path: Daf.Core.VSCode/Daf.Core
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: daf-core
           path: Daf.Core.VSCode/daf-core.vsix
@@ -66,7 +66,7 @@ jobs:
       # - name: Build installer
       #   working-directory: ./Installer/Installer
       #   run: msbuild /property:Configuration=Release
-      # - uses: actions/upload-artifact@v2
+      # - uses: actions/upload-artifact@v3
       #   with:
       #     name: daf-core-installer
       #     path: Installer/Installer/bin/Release/Installer.msi
