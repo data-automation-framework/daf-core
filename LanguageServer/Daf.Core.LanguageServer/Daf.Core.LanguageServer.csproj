@@ -16,7 +16,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="OmniSharp.Extensions.LanguageServer" Version="0.19.2" />
+    <PackageReference Include="OmniSharp.Extensions.LanguageServer" Version="0.19.5" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Daf.Core\Daf.Core.csproj" />
