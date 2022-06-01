@@ -4,7 +4,7 @@ updates:
   - package-ecosystem: "nuget"
     # Look in the root directory
     directory: "/"
-    # Check for updates once a week
+    # Check for updates once a month
     schedule:
       interval: "monthly"
       day: "friday"
@@ -14,7 +14,7 @@ updates:
   - package-ecosystem: "npm"
     # Look in the vscode extension directory
     directory: "/Daf.Core.VSCode"
-    # Check for updates once a week
+    # Check for updates once a month
     schedule:
       interval: "monthly"
       day: "friday"
@@ -24,7 +24,7 @@ updates:
   - package-ecosystem: "github-actions"
     # Look in the root directory
     directory: "/"
-    # Check for updates once a week
+    # Check for updates once a month
     schedule:
       interval: "monthly"
       day: "friday"
