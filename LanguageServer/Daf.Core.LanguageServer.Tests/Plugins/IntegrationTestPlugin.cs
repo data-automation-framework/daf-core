@@ -7,7 +7,7 @@ using System.Collections.Generic;
 #pragma warning disable CA1711 // Identifiers should not have incorrect suffix
 #pragma warning disable CA1720 // Identifier contains type name
 #pragma warning disable CA1724 // Type names should not match namespaces
-namespace Daf.Core.LanguageServerTests.Plugins
+namespace Daf.Core.LanguageServer.Tests.Plugins
 {
 	/// <summary>
 	/// Root node for the IntegrationTest plugin

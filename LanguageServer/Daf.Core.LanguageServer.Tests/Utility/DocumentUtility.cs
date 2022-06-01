@@ -7,7 +7,7 @@ using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Daf.Core.LanguageServerTests.Utility
+namespace Daf.Core.LanguageServer.Tests.Utility
 {
 	public static class DocumentUtility
 	{

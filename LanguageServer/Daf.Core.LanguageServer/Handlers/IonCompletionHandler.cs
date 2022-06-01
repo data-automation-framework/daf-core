@@ -101,7 +101,7 @@ namespace Daf.Core.LanguageServer.Handlers
 				if (completionResults.Count > 0)
 				{
 					int diff;
-					if (completionInput.InputText.Contains(".", StringComparison.OrdinalIgnoreCase))
+					if (completionInput.InputText.Contains('.', StringComparison.OrdinalIgnoreCase))
 					{
 						diff = character - (completionInput.InputText.LastIndexOf(".", StringComparison.OrdinalIgnoreCase) + 1 + completionInput.StartCharacter);
 					}

@@ -3,10 +3,10 @@
 
 using System;
 using Daf.Core.LanguageServer.Document;
-using Daf.Core.LanguageServerTests.Utility;
+using Daf.Core.LanguageServer.Tests.Utility;
 using Xunit;
 
-namespace Daf.Core.LanguageServerTests.UnitTests
+namespace Daf.Core.LanguageServer.Tests.UnitTests
 {
 	public class IonDocument_GetPositionalContext
 	{

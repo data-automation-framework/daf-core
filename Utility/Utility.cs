@@ -4,7 +4,9 @@
 using System;
 using System.IO;
 
+#pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace Daf.Core.Utility
+#pragma warning restore IDE0130 // Namespace does not match folder structure
 {
 	// Methods contained in this class can be called from within T4.
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1724:Type names should not match namespaces", Justification = "TODO fix this later.")]
