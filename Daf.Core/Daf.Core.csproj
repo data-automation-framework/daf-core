@@ -19,7 +19,7 @@
     </PackageReference>
     <PackageReference Include="NuGet.Common" Version="5.10.0" />
     <PackageReference Include="NuGet.Configuration" Version="5.10.0" />
-    <PackageReference Include="NuGet.DependencyResolver.Core" Version="5.10.0" />
+    <PackageReference Include="NuGet.DependencyResolver.Core" Version="6.2.0" />
     <PackageReference Include="NuGet.Frameworks" Version="5.10.0" />
     <PackageReference Include="NuGet.Packaging.Core" Version="5.10.0" />
     <PackageReference Include="NuGet.Protocol" Version="5.10.0" />
