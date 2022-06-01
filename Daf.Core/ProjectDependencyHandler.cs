@@ -232,8 +232,10 @@ namespace Daf.Core
 		{
 			bool isPlugin = false;
 
-			PluginConfig pc = new(assemblyPath);
-			pc.IsUnloadable = true;
+			PluginConfig pc = new(assemblyPath)
+			{
+				IsUnloadable = true
+			};
 
 			PluginLoader loader = new(pc);
 			loader.LoadAssemblyFromPath(assemblyPath);
@@ -254,8 +256,10 @@ namespace Daf.Core
 		{
 			List<IPlugin> plugins = new();
 
-			PluginConfig pc = new(assemblyPath);
-			pc.IsUnloadable = true;
+			PluginConfig pc = new(assemblyPath)
+			{
+				IsUnloadable = true
+			};
 
 			PluginLoader loader = new(pc);
 			loader.LoadAssemblyFromPath(assemblyPath);

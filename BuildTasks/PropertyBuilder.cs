@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
+#pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace Daf.Core.BuildTasks
+#pragma warning restore IDE0130 // Namespace does not match folder structure
 {
 	/// <summary>
 	/// This is used by the .targets file in order to build key-value property pairs for MSBuild.

@@ -6,7 +6,7 @@ using Daf.Core.LanguageServer.Document;
 using Daf.Core.LanguageServer.Handlers;
 using Daf.Core.LanguageServer.Model;
 using Daf.Core.LanguageServer.Services;
-using Daf.Core.LanguageServerTests.Utility;
+using Daf.Core.LanguageServer.Tests.Utility;
 using System;
 using System.IO;
 using System.Linq;
@@ -14,7 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Daf.Core.LanguageServerTests.IntegrationTests
+namespace Daf.Core.LanguageServer.Tests.IntegrationTests
 {
 	public class IonCompletionHandler_Handle
 	{
