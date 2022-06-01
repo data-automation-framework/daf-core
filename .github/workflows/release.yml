@@ -94,7 +94,7 @@ jobs:
           failOnError: true
           configuration: "configs/configuration.json"
           toTag: v${{ steps.nbgv.outputs.SimpleVersion }}
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: daf-core-buildsystem
           path: daf-core-buildsystem
