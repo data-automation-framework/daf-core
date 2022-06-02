@@ -11,7 +11,7 @@
     <Exec Command="xcopy $(SolutionDir)BuildTasks\bin\$(Configuration)\$(TargetFramework) $(SolutionDir)bin\CustomProjectSystems\Daf.Core\Dependencies /y /i &gt; nul&#xD;&#xA;xcopy $(SolutionDir)Daf.Core.PreBuild\bin\$(Configuration)\$(TargetFramework) $(SolutionDir)bin\CustomProjectSystems\Daf.Core\Dependencies /y /i &gt; nul&#xD;&#xA;xcopy $(SolutionDir)Daf.Core\bin\$(Configuration)\$(TargetFramework) $(SolutionDir)bin\CustomProjectSystems\Daf.Core\Dependencies /y /i /s /EXCLUDE:$(SolutionDir)exclude-postbuild.txt &gt; nul&#xD;&#xA;xcopy $(SolutionDir)MSBuild $(SolutionDir)bin\CustomProjectSystems\Daf.Core /y /i &gt; nul" />
   </Target>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.10.0" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.2.0" />
   </ItemGroup>
   <ItemGroup>
     <SourceFiles Include="$(SolutionDir)bin/CustomProjectSystems/Daf.Core/**/*" Exclude="$(SolutionDir)bin/CustomProjectSystems/Daf.Core/**/*.runtimeconfig.dev.json;$(SolutionDir)bin/CustomProjectSystems/Daf.Core/**/*.pdb;$(SolutionDir)bin/CustomProjectSystems/Daf.Core/Dependencies/Microsoft.Win32.SystemEvents.dll;$(SolutionDir)bin/CustomProjectSystems/Daf.Core/Dependencies/System.Drawing.Common.dll;$(SolutionDir)bin/CustomProjectSystems/Daf.Core/Dependencies/System.Security.Cryptography.Pkcs.dll;$(SolutionDir)bin/CustomProjectSystems/Daf.Core/Dependencies/System.Security.Cryptography.ProtectedData.dll;$(SolutionDir)bin/CustomProjectSystems/Daf.Core/Dependencies/System.Security.Permissions.dll;$(SolutionDir)bin/CustomProjectSystems/Daf.Core/Dependencies/System.Windows.Extensions.dll;$(SolutionDir)bin/CustomProjectSystems/Daf.Core/Dependencies/ref/Daf.Core.dll" />
