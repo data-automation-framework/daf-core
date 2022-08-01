@@ -126,7 +126,7 @@
 		"lint": "eslint -c .eslintrc.js --ext .ts src"
 	},
 	"dependencies": {
-		"vscode-languageclient": "^7.0.0"
+		"vscode-languageclient": "^8.0.2"
 	},
 	"devDependencies": {
 		"@types/glob": "^7.1.3",
