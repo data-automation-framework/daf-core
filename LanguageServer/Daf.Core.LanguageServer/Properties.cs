@@ -21,8 +21,7 @@ namespace Daf.Core.LanguageServer
 		{
 			get
 			{
-				if (_instance == null)
-					_instance = new Properties();
+				_instance ??= new Properties();
 
 				return _instance;
 			}
