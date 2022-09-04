@@ -84,6 +84,7 @@ namespace Daf.Core.LanguageServer.Tests.Utility
 			return attributePosition + attributeName.Length + attributeValueAssignment.Length;  //Start of attribute value
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0220:Add explicit cast", Justification = "<Pending>")]
 		internal static int GetAbsolutePositionOfTextInIonComment(IonDocument document, string text)
 		{
 			MatchCollection mc = Regex.Matches(document.Content, "#.+"); //# starts comments
@@ -95,6 +96,7 @@ namespace Daf.Core.LanguageServer.Tests.Utility
 			throw new ArgumentException($"Text {text} not found in any ion (#) comment in the provided IonDocument");
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0220:Add explicit cast", Justification = "<Pending>")]
 		internal static int GetAbsolutePositionOfTextInCode(IonDocument document, string text)
 		{
 			foreach (Match m in Regex.Matches(document.Content, "<#.*?#>", RegexOptions.Singleline))   //Multiline C# code blocks
