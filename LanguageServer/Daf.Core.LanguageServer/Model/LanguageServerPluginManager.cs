@@ -405,6 +405,7 @@ namespace Daf.Core.LanguageServer.Model
 			PluginParsingStatuses.AddRange(statuses);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0220:Add explicit cast", Justification = "<Pending>")]
 		private List<string> GetNugetPlugins()
 		{
 			List<string> pluginPaths = new();
