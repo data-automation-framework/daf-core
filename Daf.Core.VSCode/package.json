@@ -11,7 +11,7 @@
 		"url": "https://github.com/data-automation-framework/daf-core.git"
 	},
 	"engines": {
-		"vscode": "^1.67.0"
+		"vscode": "^1.70.0"
 	},
 	"categories": [
 		"Programming Languages",
@@ -131,8 +131,8 @@
 	"devDependencies": {
 		"@types/glob": "^8.0.0",
 		"@types/mocha": "^8.2.2",
+		"@types/vscode": "^1.70.0",
 		"@types/node": "^18.7.14",
-		"@types/vscode": "^1.67.0",
 		"@typescript-eslint/eslint-plugin": "^4.33.0",
 		"@typescript-eslint/parser": "^4.33.0",
 		"eslint": "^7.32.0",
