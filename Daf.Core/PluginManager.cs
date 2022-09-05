@@ -56,6 +56,7 @@ namespace Daf.Core
 			return validPlugins;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0220:Add explicit cast", Justification = "<Pending>")]
 		private static List<IPlugin> LoadPluginsFromNuget()
 		{
 			List<IPlugin> nugetPlugins = new();
