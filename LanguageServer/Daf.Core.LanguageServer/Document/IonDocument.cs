@@ -272,6 +272,7 @@ namespace Daf.Core.LanguageServer.Document
 		}
 
 		//Generate links to files being referenced in the document
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0220:Add explicit cast", Justification = "<Pending>")]
 		private List<Location> GenerateLinks()
 		{
 			List<Location> locs = new();
