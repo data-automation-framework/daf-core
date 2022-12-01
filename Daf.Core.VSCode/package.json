@@ -130,14 +130,14 @@
 	},
 	"devDependencies": {
 		"@types/glob": "^8.0.0",
-		"@types/mocha": "^8.2.2",
+		"@types/mocha": "^10.0.1",
 		"@types/vscode": "^1.71.0",
 		"@types/node": "^18.7.14",
 		"@typescript-eslint/eslint-plugin": "^4.33.0",
 		"@typescript-eslint/parser": "^4.33.0",
 		"eslint": "^7.32.0",
 		"glob": "^8.0.3",
-		"mocha": "^10.0.0",
+		"mocha": "^10.1.0",
 		"typescript": "^4.3.5",
 		"vscode-test": "^1.6.1"
 	}
